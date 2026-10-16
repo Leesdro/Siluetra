@@ -1,0 +1,19 @@
+import {precision} from './precision.js';
+import {curveBoolean} from './curve-engine.js';
+import {adaptivePoints} from './bezier.js';
+import {joinNearest} from './vector-edit.js';
+import Clipper from './vendor/clipper.js';
+import {uid,I,clone,worldPath,evaluatedPath,samples,makePath,polyD,offsetPoints,uniform} from './core.js';
+const scale=precision.clipperScale;
+export function toClip(pts){return pts.map(p=>{if(!Number.isFinite(p.x)||!Number.isFinite(p.y)||Math.abs(p.x)>precision.maxCoordinate||Math.abs(p.y)>precision.maxCoordinate)throw Error('La geometría excede el rango seguro de esta operación.');return {X:Math.round(p.x*scale),Y:Math.round(p.y*scale)};});}
+export const fromClip=ps=>ps.map(p=>({x:p.X/scale,y:p.Y/scale}));
+export function contours(o){const p=worldPath(o);return [p,...(p.subpaths||[])].filter(c=>c.closed).map(c=>adaptivePoints({...c,subpaths:[]},precision.flatten));}
+export function offsetClosed(contours,d){if(!Number.isFinite(d))throw Error('Distancia inválida.');const c=new Clipper.Clipper();c.AddPaths(contours.map(toClip),Clipper.PolyType.ptSubject,true);const oriented=[];c.Execute(Clipper.ClipType.ctUnion,oriented,Clipper.PolyFillType.pftEvenOdd,Clipper.PolyFillType.pftEvenOdd);const co=new Clipper.ClipperOffset(2,.1*scale);co.AddPaths(oriented,Clipper.JoinType.jtRound,Clipper.EndType.etClosedPolygon);const out=[];co.Execute(out,d*scale);return out.map(fromClip);}
+export function clipLines(lines,polygons){if(!polygons.length)return [];const c=new Clipper.Clipper();c.AddPaths(lines.map(toClip),Clipper.PolyType.ptSubject,false);c.AddPaths(polygons.map(toClip),Clipper.PolyType.ptClip,true);const tree=new Clipper.PolyTree();c.Execute(Clipper.ClipType.ctIntersection,tree,Clipper.PolyFillType.pftEvenOdd,Clipper.PolyFillType.pftEvenOdd);return Clipper.Clipper.OpenPathsFromPolyTree(tree).map(fromClip);}
+export function pathFromContours(ps,name='Resultado',appearance={}){if(!ps.length)return null;const o=makePath(name,polyD(ps[0])+' Z',appearance.fill||'#ffffff',appearance);o.subpaths=ps.slice(1).map(pts=>({nodes:pts.map(p=>({...p,nid:uid()})),closed:true}));return o;}
+export const booleanPaths=curveBoolean;
+
+export function offsetEditable(o,d){if(!Number.isFinite(d))throw Error('Distancia inválida.');const p=worldPath(o);if(p.closed)return pathFromContours(offsetClosed(contours(o),d),'Offset '+d,{fill:o.fill,stroke:o.stroke,width:o.width});const ps=offsetPoints(uniform(adaptivePoints(p,precision.flatten),2),d);return makePath('Offset '+d,polyD(ps),'none',{stroke:o.stroke,width:o.width});}
+export function outlineStroke(o){if(!o||!Number.isFinite(o.width)||o.width<=0)return null;const w=evaluatedPath(o),co=new Clipper.ClipperOffset(2,.1*scale);for(const sp of [w,...w.subpaths||[]]){const ps=adaptivePoints(sp,precision.flatten);co.AddPath(toClip(ps),({miter:Clipper.JoinType.jtMiter,bevel:Clipper.JoinType.jtSquare})[o.lineJoin]??Clipper.JoinType.jtRound,sp.closed?Clipper.EndType.etClosedLine:({butt:Clipper.EndType.etOpenButt,square:Clipper.EndType.etOpenSquare})[o.lineCap]??Clipper.EndType.etOpenRound);}const out=[];co.Execute(out,o.width*scale/2);const result=pathFromContours(out.map(fromClip),'Contorno de línea',{fill:o.stroke,stroke:'none',width:0});if(result)result.matrix=clone(o.matrix||I());return result;}
+export const joinPaths=joinNearest;
+export function splitPath(o,index){if(index<0||index>=o.nodes.length)return null;const result=clone(o);result.id=uid();result.name+=' · parte';delete result.symmetry;delete result.mirrorPeer;delete o.symmetry;delete o.mirrorPeer;if(o.closed){o.nodes=[...o.nodes.slice(index),...o.nodes.slice(0,index+1)];o.nodes.at(-1).nid=uid();o.closed=false;delete o.nodes[0].in;delete o.nodes.at(-1).out;return [];}if(index===0||index===o.nodes.length-1)return null;result.nodes=clone(o.nodes.slice(index));result.nodes[0].nid=uid();o.nodes=o.nodes.slice(0,index+1);delete o.nodes.at(-1).out;delete result.nodes[0].in;return [result];}

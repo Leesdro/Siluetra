@@ -1,0 +1,27 @@
+[
+  [
+    "dist/core.js",
+    "dist/bezier.js",
+    "dist/core.js"
+  ],
+  [
+    "dist/core.js",
+    "dist/appearance.js",
+    "dist/core.js"
+  ],
+  [
+    "dist/model.js",
+    "dist/panels.js",
+    "dist/edge-panels.js",
+    "dist/visual-regions.js",
+    "dist/hit.js",
+    "dist/model.js"
+  ],
+  [
+    "dist/model.js",
+    "dist/panels.js",
+    "dist/edge-panels.js",
+    "dist/hit.js",
+    "dist/model.js"
+  ]
+]

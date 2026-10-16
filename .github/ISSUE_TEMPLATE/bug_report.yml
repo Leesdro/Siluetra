@@ -1,0 +1,27 @@
+name: Bug report
+description: Bug report
+body:
+  - type: textarea
+    id: browser
+    attributes:
+      label: Browser and version
+  - type: textarea
+    id: os
+    attributes:
+      label: Operating system
+  - type: textarea
+    id: steps
+    attributes:
+      label: Reproduction steps
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behavior
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Screenshots or fictional fixture; no private data

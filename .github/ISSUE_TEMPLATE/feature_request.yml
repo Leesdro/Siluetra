@@ -1,0 +1,15 @@
+name: Feature request
+description: Feature request
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Garment workflow problem
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed improvement
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives

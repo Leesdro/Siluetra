@@ -1,0 +1,50 @@
+{
+  "name": "atelier-flat",
+  "version": "15.0.1",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "test": "node --test tests/*.test.js",
+    "validate": "node scripts/validate-publication.mjs",
+    "build": "node scripts/build-desktop-ui.mjs",
+    "qa:install": "node qa/browser.mjs --install",
+    "qa:browser": "node node_modules/@playwright/test/cli.js test --update-snapshots=none",
+    "qa:visual": "node node_modules/@playwright/test/cli.js test --grep @visual --update-snapshots=none",
+    "qa:smoke": "node node_modules/@playwright/test/cli.js test --grep @smoke --update-snapshots=none",
+    "qa:update": "node node_modules/@playwright/test/cli.js test --update-snapshots=all",
+    "qa:validate": "node qa/validate-modules.mjs",
+    "start": "node qa/server.mjs",
+    "validate:owner": "node scripts/validate-owner-hosting.mjs"
+  },
+  "dependencies": {
+    "@spectrum-css/tokens": "16.0.2",
+    "@spectrum-web-components/action-button": "1.12.4",
+    "@spectrum-web-components/action-group": "1.12.4",
+    "@spectrum-web-components/action-menu": "1.12.4",
+    "@spectrum-web-components/button": "1.12.4",
+    "@spectrum-web-components/checkbox": "1.12.4",
+    "@spectrum-web-components/dialog": "1.12.4",
+    "@spectrum-web-components/icons-workflow": "1.12.4",
+    "@spectrum-web-components/menu": "1.12.4",
+    "@spectrum-web-components/number-field": "1.12.4",
+    "@spectrum-web-components/picker": "1.12.4",
+    "@spectrum-web-components/popover": "1.12.4",
+    "@spectrum-web-components/slider": "1.12.4",
+    "@spectrum-web-components/switch": "1.12.4",
+    "@spectrum-web-components/tabs": "1.12.4",
+    "@spectrum-web-components/textfield": "1.12.4",
+    "@spectrum-web-components/theme": "1.12.4",
+    "@spectrum-web-components/tooltip": "1.12.4",
+    "dockview": "8.5.1"
+  },
+  "devDependencies": {
+    "@playwright/cli": "0.1.22",
+    "@playwright/test": "1.64.0",
+    "@sparticuz/chromium": "153.0.0",
+    "esbuild": "0.28.2"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "license": "MIT"
+}

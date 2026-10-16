@@ -1,0 +1,5 @@
+// Additional UI math adapted from VectorCraft geom/snap.rs (MIT), see THIRD_PARTY_NOTICES.md.
+export function closestTarget(value,targets,tolerance){let best=null;for(const target of targets){const delta=target-value;if(Math.abs(delta)<=tolerance&&(!best||Math.abs(delta)<Math.abs(best.delta)))best={target,delta};}return best;}
+export function constrainAngle(a,b,step=45){const dx=b.x-a.x,dy=b.y-a.y,len=Math.hypot(dx,dy),angle=Math.round(Math.atan2(dy,dx)/(step*Math.PI/180))*step*Math.PI/180;return {x:a.x+Math.cos(angle)*len,y:a.y+Math.sin(angle)*len};}
+export const normalizeSearch=value=>String(value).normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
+export function searchCommands(items,query){const words=normalizeSearch(query).split(/\s+/).filter(Boolean);const match=(word,text)=>{if(text.includes(word))return true;if(word.length<3)return false;let i=0;for(const c of text)if(c===word[i])i++;return i===word.length;};return items.filter(item=>words.every(w=>match(w,normalizeSearch(item.label+' '+item.id+' '+(item.shortcut||'')))));}

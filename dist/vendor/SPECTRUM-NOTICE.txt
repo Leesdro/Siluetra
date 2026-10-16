@@ -1,0 +1,10 @@
+Adobe Spectrum Web Components 1.12.4 and Spectrum CSS tokens 16.0.2.
+Official npm distributions bundled locally; source algorithms/components unchanged.
+Spectrum Web Components npm gitHead: d6cb9ba9c11dfb987f02b1fd9c20aa2de1a58e11.
+Repository https://github.com/adobe/spectrum-web-components ; root LICENSE Apache-2.0.
+Spectrum CSS https://github.com/adobe/spectrum-css ; distributed tokens CSS copyright 2024 Adobe, Apache-2.0.
+Runtime copyright banners retained by esbuild in desktop-ui.js.LEGAL.txt.
+DESKTOP-UI-PROVENANCE.json records all exact bundled versions and npm license declarations. Most SWC packages declare Apache-2.0; theme/base/shared declare ISC in npm metadata despite the repository root Apache license. Both permissions are retained here; no license normalization is claimed.
+ISC terms for those packages (Adobe):
+Permission to use, copy, modify, and/or distribute this software for any purpose with or without fee is hereby granted, provided that the above copyright notice and this permission notice appear in all copies.
+THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.

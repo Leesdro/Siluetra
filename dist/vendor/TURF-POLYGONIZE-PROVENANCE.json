@@ -1,0 +1,62 @@
+{
+  "package": "@turf/polygonize",
+  "version": "7.4.0",
+  "license": "MIT",
+  "integration": "local ESM bundle of official npm distribution; algorithm unchanged",
+  "sourceTarballSha1": "64b9371f15d57855d8b9743f24a4e108b9a668e9",
+  "sha256": "90a52b3c40683e641b62ee77a8eebfd010c69e27835849a3e6701d5e6489034a",
+  "bytes": 46886,
+  "generator": "esbuild 0.25.12 (vendoring only; no app build step)",
+  "runtimePackages": [
+    {
+      "name": "@turf/helpers",
+      "version": "7.4.0",
+      "license": "MIT"
+    },
+    {
+      "name": "robust-predicates",
+      "version": "3.0.3",
+      "license": "Unlicense"
+    },
+    {
+      "name": "point-in-polygon-hao",
+      "version": "1.2.4",
+      "license": "MIT"
+    },
+    {
+      "name": "@turf/invariant",
+      "version": "7.4.0",
+      "license": "MIT"
+    },
+    {
+      "name": "@turf/boolean-point-in-polygon",
+      "version": "7.4.0",
+      "license": "MIT"
+    },
+    {
+      "name": "@turf/meta",
+      "version": "7.4.0",
+      "license": "MIT"
+    },
+    {
+      "name": "@turf/bbox",
+      "version": "7.4.0",
+      "license": "MIT"
+    },
+    {
+      "name": "@turf/bbox-polygon",
+      "version": "7.4.0",
+      "license": "MIT"
+    },
+    {
+      "name": "@turf/envelope",
+      "version": "7.4.0",
+      "license": "MIT"
+    },
+    {
+      "name": "@turf/polygonize",
+      "version": "7.4.0",
+      "license": "MIT"
+    }
+  ]
+}

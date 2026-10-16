@@ -1,0 +1,8 @@
+import assert from 'node:assert/strict';import {readFileSync} from 'node:fs';import {createHash} from 'node:crypto';
+const root=new URL('../dist/vendor/',import.meta.url),provenance=JSON.parse(readFileSync(new URL('TURF-POLYGONIZE-PROVENANCE.json',root))),bytes=readFileSync(new URL('turf-polygonize.js',root)),license=readFileSync(new URL('TURF-DEPENDENCY-LICENSES.txt',root),'utf8');
+assert.equal(provenance.package,'@turf/polygonize');assert.equal(provenance.version,'7.4.0');assert.equal(provenance.license,'MIT');assert.equal(createHash('sha256').update(bytes).digest('hex'),provenance.sha256);assert.equal(bytes.length,provenance.bytes);
+assert.ok(!/\b(?:from|import)\s*['"](?:@turf|https?:|point-in-polygon|robust-predicates)/.test(bytes.toString()),'all browser dependencies are local');
+assert.ok(!provenance.runtimePackages.some(p=>p.name==='@turf/turf'));
+for(const p of provenance.runtimePackages)assert.ok(license.includes(p.name+' '+p.version),p.name+' license');
+assert.ok(license.includes('Permission is hereby granted'));assert.ok(license.includes('public domain'));const {default:polygonize}=await import('../dist/vendor/turf-polygonize.js');const lines=[[[0,0],[10,0]],[[10,0],[10,10]],[[10,10],[0,10]],[[0,10],[0,0]]].map(coordinates=>({type:'Feature',properties:{},geometry:{type:'LineString',coordinates}}));assert.equal(polygonize({type:'FeatureCollection',features:lines}).features.length,1);
+console.log('PASS: Polygonize 7.4.0 MIT, exact vendored hash, '+bytes.length+' bytes, '+provenance.runtimePackages.length+' licensed runtime packages, local ESM import, no CDN or whole Turf bundle.');

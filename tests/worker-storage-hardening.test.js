@@ -1,0 +1,10 @@
+import test from 'node:test';import assert from 'node:assert/strict';
+import {workerTask} from '../dist/worker-task.js';
+import {saveProject,loadProject} from '../dist/storage.js';
+import {newProject} from '../dist/templates.js';
+const fakeWorker=()=>({terminated:0,postMessage(){},terminate(){this.terminated++;}});
+test('worker success terminates and clears callbacks exactly once',async()=>{const w=fakeWorker(),p=workerTask(w,{});w.onmessage({data:{objects:[]}});assert.deepEqual(await p,[]);assert.equal(w.terminated,1);assert.equal(w.onmessage,null);assert.equal(w.onerror,null);});
+test('worker timeout rejects, terminates and prevents a permanently busy operation',async()=>{const w=fakeWorker();let timeout;const p=workerTask(w,{},{},{schedule:fn=>{timeout=fn;return 1;},unschedule:()=>{}});timeout();await assert.rejects(p,/tardó/);assert.equal(w.terminated,1);});
+for(const kind of ['error','messageerror','bad-result','throw'])test('worker '+kind+' closes lifecycle',async()=>{const w=fakeWorker();if(kind==='throw')w.postMessage=()=>{throw Error('fault');};const p=workerTask(w,{});if(kind==='error')w.onerror();if(kind==='messageerror')w.onmessageerror();if(kind==='bad-result')w.onmessage({data:{objects:'invalid'}});await assert.rejects(p);assert.equal(w.terminated,1);});
+test('IndexedDB abort and setup errors reject and close the database',async()=>{for(const kind of ['abort','transaction','put']){let closed=0;globalThis.indexedDB={open(){const req={};queueMicrotask(()=>{req.result={close(){closed++;},transaction(){if(kind==='transaction')throw Error('setup');const t={objectStore(){return {get(){if(kind==='put')throw Error('request');queueMicrotask(()=>t.onabort());return {};}};}};return t;}};req.onsuccess();});return req;}};await assert.rejects(loadProject('id'));assert.equal(closed,1);}});
+test('storage validation happens before IndexedDB access and nonfinite data cannot be serialized into null',()=>{let opened=0;globalThis.indexedDB={open(){opened++;throw Error('must not open');}};const p=newProject('tee');p.views.front[0].nodes[0].x=NaN;assert.throws(()=>saveProject(p));assert.equal(opened,0);});

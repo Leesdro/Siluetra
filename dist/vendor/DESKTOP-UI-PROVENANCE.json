@@ -1,0 +1,262 @@
+{
+  "builder": "esbuild 0.28.2",
+  "packages": [
+    {
+      "name": "dockview-core",
+      "version": "8.5.1",
+      "license": "MIT"
+    },
+    {
+      "name": "dockview",
+      "version": "8.5.1",
+      "license": "MIT"
+    },
+    {
+      "name": "@spectrum-web-components/base",
+      "version": "1.12.4",
+      "license": "Apache-2.0"
+    },
+    {
+      "name": "@spectrum-web-components/theme",
+      "version": "1.12.4",
+      "license": "ISC"
+    },
+    {
+      "name": "@lit/reactive-element",
+      "version": "2.1.2",
+      "license": "BSD-3-Clause"
+    },
+    {
+      "name": "lit-html",
+      "version": "3.3.3",
+      "license": "BSD-3-Clause"
+    },
+    {
+      "name": "lit-element",
+      "version": "4.2.2",
+      "license": "BSD-3-Clause"
+    },
+    {
+      "name": "lit",
+      "version": "3.3.3",
+      "license": "BSD-3-Clause"
+    },
+    {
+      "name": "@spectrum-web-components/progress-circle",
+      "version": "1.12.4",
+      "license": "Apache-2.0"
+    },
+    {
+      "name": "@spectrum-web-components/reactive-controllers",
+      "version": "1.12.4",
+      "license": "Apache-2.0"
+    },
+    {
+      "name": "@spectrum-web-components/shared",
+      "version": "1.12.4",
+      "license": "Apache-2.0"
+    },
+    {
+      "name": "@spectrum-web-components/button",
+      "version": "1.12.4",
+      "license": "Apache-2.0"
+    },
+    {
+      "name": "focus-visible",
+      "version": "5.2.1",
+      "license": "W3C"
+    },
+    {
+      "name": "@lit-labs/observers",
+      "version": "2.0.2",
+      "license": "BSD-3-Clause"
+    },
+    {
+      "name": "@spectrum-web-components/clear-button",
+      "version": "1.12.4",
+      "license": "Apache-2.0"
+    },
+    {
+      "name": "@spectrum-web-components/icon",
+      "version": "1.12.4",
+      "license": "Apache-2.0"
+    },
+    {
+      "name": "@spectrum-web-components/iconset",
+      "version": "1.12.4",
+      "license": "Apache-2.0"
+    },
+    {
+      "name": "@spectrum-web-components/icons-ui",
+      "version": "1.12.4",
+      "license": "Apache-2.0"
+    },
+    {
+      "name": "@spectrum-web-components/close-button",
+      "version": "1.12.4",
+      "license": "Apache-2.0"
+    },
+    {
+      "name": "@spectrum-web-components/action-button",
+      "version": "1.12.4",
+      "license": "Apache-2.0"
+    },
+    {
+      "name": "@spectrum-web-components/overlay",
+      "version": "1.12.4",
+      "license": "Apache-2.0"
+    },
+    {
+      "name": "@spectrum-web-components/icons-workflow",
+      "version": "1.12.4",
+      "license": "Apache-2.0"
+    },
+    {
+      "name": "@spectrum-web-components/divider",
+      "version": "1.12.4",
+      "license": "Apache-2.0"
+    },
+    {
+      "name": "@spectrum-web-components/menu",
+      "version": "1.12.4",
+      "license": "Apache-2.0"
+    },
+    {
+      "name": "@floating-ui/core",
+      "version": "1.8.0",
+      "license": "MIT"
+    },
+    {
+      "name": "@floating-ui/utils",
+      "version": "0.2.10",
+      "license": "MIT"
+    },
+    {
+      "name": "@floating-ui/dom",
+      "version": "1.7.4",
+      "license": "MIT"
+    },
+    {
+      "name": "tabbable",
+      "version": "6.5.0",
+      "license": "MIT"
+    },
+    {
+      "name": "focus-trap",
+      "version": "7.6.5",
+      "license": "MIT"
+    },
+    {
+      "name": "@spectrum-web-components/popover",
+      "version": "1.12.4",
+      "license": "Apache-2.0"
+    },
+    {
+      "name": "@spectrum-web-components/picker",
+      "version": "1.12.4",
+      "license": "Apache-2.0"
+    },
+    {
+      "name": "@spectrum-web-components/modal",
+      "version": "1.12.4",
+      "license": "Apache-2.0"
+    },
+    {
+      "name": "@spectrum-web-components/underlay",
+      "version": "1.12.4",
+      "license": "Apache-2.0"
+    },
+    {
+      "name": "@spectrum-web-components/tray",
+      "version": "1.12.4",
+      "license": "Apache-2.0"
+    },
+    {
+      "name": "@spectrum-web-components/action-menu",
+      "version": "1.12.4",
+      "license": "Apache-2.0"
+    },
+    {
+      "name": "@spectrum-web-components/action-group",
+      "version": "1.12.4",
+      "license": "Apache-2.0"
+    },
+    {
+      "name": "@spectrum-web-components/tooltip",
+      "version": "1.12.4",
+      "license": "Apache-2.0"
+    },
+    {
+      "name": "@spectrum-web-components/help-text",
+      "version": "1.12.4",
+      "license": "Apache-2.0"
+    },
+    {
+      "name": "@spectrum-web-components/textfield",
+      "version": "1.12.4",
+      "license": "Apache-2.0"
+    },
+    {
+      "name": "@internationalized/number",
+      "version": "3.6.5",
+      "license": "Apache-2.0"
+    },
+    {
+      "name": "@spectrum-web-components/infield-button",
+      "version": "1.12.4",
+      "license": "Apache-2.0"
+    },
+    {
+      "name": "@spectrum-web-components/number-field",
+      "version": "1.12.4",
+      "license": "Apache-2.0"
+    },
+    {
+      "name": "@spectrum-web-components/slider",
+      "version": "1.12.4",
+      "license": "Apache-2.0"
+    },
+    {
+      "name": "@spectrum-web-components/field-label",
+      "version": "1.12.4",
+      "license": "Apache-2.0"
+    },
+    {
+      "name": "@spectrum-web-components/checkbox",
+      "version": "1.12.4",
+      "license": "Apache-2.0"
+    },
+    {
+      "name": "@spectrum-web-components/switch",
+      "version": "1.12.4",
+      "license": "Apache-2.0"
+    },
+    {
+      "name": "@spectrum-web-components/button-group",
+      "version": "1.12.4",
+      "license": "Apache-2.0"
+    },
+    {
+      "name": "@spectrum-web-components/alert-dialog",
+      "version": "1.12.4",
+      "license": "Apache-2.0"
+    },
+    {
+      "name": "@spectrum-web-components/dialog",
+      "version": "1.12.4",
+      "license": "Apache-2.0"
+    },
+    {
+      "name": "@spectrum-web-components/tabs",
+      "version": "1.12.4",
+      "license": "Apache-2.0"
+    },
+    {
+      "name": "@spectrum-css/tokens",
+      "version": "16.0.2",
+      "license": "Apache-2.0"
+    }
+  ],
+  "bytes": 1492146,
+  "sha256": "ce4a881fb326a962a83768d2f4063c6efda9864fd8aa6e821ce9d30c63579d0b"
+}

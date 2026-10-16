@@ -1,0 +1,7 @@
+Paper.js 0.12.18, MIT licensed. See PAPER-LICENSE.txt.
+Source: https://github.com/paperjs/paper.js
+Release commit: c1d88390d2c86901db152827fe778c3e39cfb073
+paper-geometry.js derives from dist/paper-core.js with a geometry-only environment,
+no node/self or node/extend require, no Project canvas/view initialization,
+and an ES module default export. Original copyright notices are retained.
+Siluetra uses its curve boolean/intersection functions; it does not use the Paper renderer.

@@ -1,0 +1,7 @@
+@turf/polygonize 7.4.0, MIT, Turf Authors.
+Source: https://github.com/Turfjs/turf/tree/v7.4.0/packages/turf-polygonize
+Bundled locally from the exact official npm package; no polygonizer algorithm adaptations.
+See TURF-POLYGONIZE-PROVENANCE.json for pinned runtime package versions and output hash.
+All redistributed dependency licenses are preserved in TURF-DEPENDENCY-LICENSES.txt.
+Rebuild with esbuild 0.25.12: input @turf/polygonize/dist/esm/index.js, --bundle --format=esm --platform=browser --target=es2022 --legal-comments=inline.
+No runtime npm imports, network access, CDN, or whole @turf/turf bundle.

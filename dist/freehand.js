@@ -1,0 +1,7 @@
+import {smoothAnchors} from './vector-edit.js';
+import {uid,I,samples,worldPath} from './core.js';
+const dist=(p,a,b)=>{const dx=b.x-a.x,dy=b.y-a.y,t=Math.max(0,Math.min(1,((p.x-a.x)*dx+(p.y-a.y)*dy)/(dx*dx+dy*dy||1)));return Math.hypot(p.x-a.x-t*dx,p.y-a.y-t*dy);};
+export function simplify(points,tolerance){if(points.length<3)return points;let d=0,index=0;for(let i=1;i<points.length-1;i++){const v=dist(points[i],points[0],points.at(-1));if(v>d){d=v;index=i;}}return d>tolerance?[...simplify(points.slice(0,index+1),tolerance).slice(0,-1),...simplify(points.slice(index),tolerance)]:[points[0],points.at(-1)];}
+export function fitFreehand(points,smoothing=55,closed=false){if(points.length<2)return [];const clean=points.filter((p,i)=>!i||Math.hypot(p.x-points[i-1].x,p.y-points[i-1].y)>.25);const ps=simplify(clean,.35+Math.max(0,Math.min(100,smoothing))*.045);return ps.map((p,i)=>{const a=ps[Math.max(0,i-1)],b=ps[Math.min(ps.length-1,i+1)],dx=(b.x-a.x)/6,dy=(b.y-a.y)/6;return {...p,nid:uid(),kind:'smooth',...(i?{in:{x:p.x-dx,y:p.y-dy}}:{}),...(i<ps.length-1?{out:{x:p.x+dx,y:p.y+dy}}:{})};});}
+export function pencilPath(points,smoothing,width=1.7){return {id:uid(),type:'path',name:'Trazo libre',nodes:fitFreehand(points,smoothing),closed:false,matrix:I(),fill:'none',stroke:'#252a29',width,opacity:1,category:'construction',semanticType:'freehand'};}
+export function smoothPath(o,amount){return smoothAnchors(o,amount);}

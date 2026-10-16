@@ -1,0 +1,6 @@
+// Document units are CSS pixels at 96 dpi; interaction tolerances are screen pixels.
+export const precision=Object.freeze({geometry:1e-6,zeroLength:1e-9,pathEquality:1e-7,intersectionParameter:1e-9,intersectionAbsolute:1e-7,intersectionRelative:Number.EPSILON*64,clipperScale:1000,flatten:.02,panelGeometry:.005,panelSnapPixels:6,maxCurveSamples:16384,maxPathSamples:100000,maxCoordinate:1e9,maxNodes:200000,maxObjects:5000,maxDepth:128,maxJsonEntries:2000000,hitPixels:7,snapPixels:7,uiDecimals:1});
+export const coordinateTolerance=points=>Math.max(precision.intersectionAbsolute,...points.flatMap(p=>[Math.abs(p.x)*precision.intersectionRelative,Math.abs(p.y)*precision.intersectionRelative]));
+export function documentTolerance(pixels,zoom){if(!Number.isFinite(pixels)||pixels<0||!Number.isFinite(zoom)||zoom<=0)throw Error('Escala de interacción inválida.');return pixels/zoom;}
+export function screenToDocument(p,camera,rect={left:0,top:0}){documentTolerance(0,camera.z);return {x:(p.x-rect.left-camera.x)/camera.z,y:(p.y-rect.top-camera.y)/camera.z};}
+export function documentToScreen(p,camera,rect={left:0,top:0}){documentTolerance(0,camera.z);return {x:p.x*camera.z+camera.x+rect.left,y:p.y*camera.z+camera.y+rect.top};}

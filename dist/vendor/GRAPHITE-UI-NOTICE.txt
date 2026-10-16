@@ -1,0 +1,7 @@
+Graphite UI code adaptation, MIT option of MIT OR Apache-2.0.
+Source repository https://github.com/GraphiteEditor/Graphite
+Commit 1f1cab1b21ec1333f5df1ce4e9db6af80e1930da
+Copyright Graphite contributors. Full license: GRAPHITE-UI-LICENSE.txt.
+PanelSubdivision.svelte: MIN_PANEL_SIZE, DOCUMENT_PANEL_SHARE, EQUAL_PANEL_SHARE and document-adjacent split-share decision copied into editor/graphite-ui.js. Used for initial Dockview pane widths; docking/dragging itself is exclusively Dockview.
+IconButton.svelte: conditional extraClasses Object.entries/flatMap/join mapping copied into activeClassNames, used by Spectrum bridge for emphasized/selected tool states. No Svelte lifecycle or Graphite engine incorporated.
+No Graphite branding or icon assets redistributed. Spectrum provides general icons; garment-specific icons remain Siluetra's.
