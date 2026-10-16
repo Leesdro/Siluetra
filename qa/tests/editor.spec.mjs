@@ -1,10 +1,24 @@
 import { test, expect } from "@playwright/test";
 import { visualHoodie } from "../../tests/fixtures/visual-hoodie.js";
+import { mkdir, readFile, stat, writeFile } from "node:fs/promises";
+import path from "node:path";
 const state = (page) => page.evaluate(async () => {
   const m = await import("/app.js");
   return m.editorState();
 });
 const field = (page, selector) => page.locator(selector).locator("input");
+async function importNative(page, file, expected) {
+  const previousId = (await state(page)).project.id;
+  await page.locator("#project-input").setInputFiles(file);
+  // A visible editor and "Guardado local" can still belong to the previous document.
+  await expect.poll(async () => {
+    const { project } = await state(page);
+    return { opened: project.id !== previousId, name: project.name,
+      ids: project.views.front.map(o => o.id), toast: project.id === previousId ? await page.locator("#toast").textContent() : "" };
+  }, { message: "Native import must finish before interacting with the imported layers" }).toEqual({
+    opened: true, name: expected.name, ids: expected.views.front.map(o => o.id), toast: "",
+  });
+}
 async function menu(page, name) {
   const m = page.locator(`sp-action-menu[label="${name}"]`).first();
   await m.click();
@@ -151,7 +165,9 @@ test("drawing, nodes, color, panels, history, native save and export @browser", 
   await page.keyboard.press("Escape");
   await expect.poll(async () => (await state(page)).panelEdgeState).toBe(null);
   const fixture = visualHoodie();
-  await page.locator("#project-input").setInputFiles({ name: "qa-hoodie.garment.json", mimeType: "application/json", buffer: Buffer.from(JSON.stringify(fixture.p)) });
+  const fixtureFile = info.outputPath("qa-hoodie.garment.json");
+  await writeFile(fixtureFile, JSON.stringify(fixture.p));
+  await importNative(page, fixtureFile, fixture.p);
   await expect(page.locator("#save-state")).toHaveText("Guardado local");
   await page.locator("#library-content .name").filter({ hasText: /^Torso$/ }).click();
   await menu(page, "Prenda");
@@ -171,7 +187,7 @@ test("drawing, nodes, color, panels, history, native save and export @browser", 
   await shot(page, "edge-panel-preview");
   await page.locator("[data-create-edge-panel]").click();
   await page.locator("#undo").click();
-  await page.locator("#project-input").setInputFiles({ name: "qa-hoodie-area.garment.json", mimeType: "application/json", buffer: Buffer.from(JSON.stringify(fixture.p)) });
+  await importNative(page, fixtureFile, fixture.p);
   await menu(page, "Prenda");
   await page.locator('sp-menu-item[data-ux-command="createPanel"]').last().click();
   await page.locator('[data-panel-method="area"]').click();
@@ -194,14 +210,21 @@ test("drawing, nodes, color, panels, history, native save and export @browser", 
   await page.locator('sp-picker[data-prop="exportType"]').click();
   await page.locator('sp-menu-item[value="json"]').last().click();
   const downloaded = page.waitForEvent("download");
+  const exportedProject = (await state(page)).project;
   await page.locator("#do-export").click();
   const download = await downloaded;
   expect(download.suggestedFilename()).toContain(".garment.json");
-  const exportedFile = `qa/results/${info.project.name}/exported.garment.json`;
+  const exportedFile = info.outputPath("exported.garment.json");
+  await mkdir(path.dirname(exportedFile), { recursive: true });
+  const failure = await download.failure();
+  expect(failure, JSON.stringify({ project: info.project.name, filename: download.suggestedFilename(),
+    destination: exportedFile, directoryExists: (await stat(path.dirname(exportedFile))).isDirectory(),
+    pageClosed: page.isClosed(), failure })).toBeNull();
   await download.saveAs(exportedFile);
+  expect(JSON.parse(await readFile(exportedFile, "utf8"))).toEqual(exportedProject);
   await page.locator("#home").click();
   await expect(page.locator("#start")).toBeVisible();
-  await page.locator("#project-input").setInputFiles(exportedFile);
+  await importNative(page, exportedFile, exportedProject);
   await expect(page.locator("#editor")).toBeVisible();
   expect((await state(page)).project.views.front.some((o) => o.semanticType === "region")).toBeTruthy();
   expect(errors).toEqual([]);
