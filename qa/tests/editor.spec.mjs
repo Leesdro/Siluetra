@@ -216,6 +216,19 @@ async function drag(page, from, to) {
   await page.mouse.move(to.x + 1, to.y, { steps: 2 });
   await page.mouse.up();
 }
+async function chooseTheme(page, value) {
+  const choice = page.locator(`[data-theme-choice="${value}"]`);
+  const label = choice.getByText(value === "dark" ? "Oscuro" : "Claro", {exact:true});
+  await expect(choice).toBeVisible();
+  await expect(label).toBeVisible();
+  const buttonBox = await choice.boundingBox(), textBox = await label.boundingBox();
+  // The slotted text has pointer-events:none; target its real coordinates on
+  // the host button, away from the padded center's coincident resize sash.
+  await choice.click({position: {
+    x: textBox.x - buttonBox.x + textBox.width * 0.8,
+    y: textBox.y - buttonBox.y + textBox.height / 2
+  }});
+}
 async function reset(page) {
   await menu(page, "Ventana");
   await page.locator("sp-menu-item[data-workspace-reset]").last().click();
@@ -297,14 +310,10 @@ test("docking, persistence, reset, appearance, tooltip and cursor states @smoke 
   expect(await page.locator(".tool-learning-card:visible").count()).toBe(0);
   await page.mouse.move(80, 80);
   await page.locator("#quick-theme").click();
-  // At 1920px the padded item's center coincides with a narrow Dockview sash.
-  // Use the visible label as the real pointer target; never force the click.
-  await page.locator('[data-theme-choice="' + (info.project.metadata.theme === "dark" ? "light" : "dark") + '"]')
-    .getByText(info.project.metadata.theme === "dark" ? "Claro" : "Oscuro", {exact:true}).click();
+  await chooseTheme(page, info.project.metadata.theme === "dark" ? "light" : "dark");
   await expect(page.locator("#siluetra-theme")).toHaveAttribute("color", info.project.metadata.theme === "dark" ? "light" : "dark");
   await page.locator("#quick-theme").click();
-  await page.locator('[data-theme-choice="' + info.project.metadata.theme + '"]')
-    .getByText(info.project.metadata.theme === "dark" ? "Oscuro" : "Claro", {exact:true}).click();
+  await chooseTheme(page, info.project.metadata.theme);
   await expect(page.locator("#siluetra-theme")).toHaveAttribute("color", info.project.metadata.theme);
   await menu(page, "Archivo");
   await page.keyboard.press("ArrowDown");
