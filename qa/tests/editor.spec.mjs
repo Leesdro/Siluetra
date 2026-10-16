@@ -36,7 +36,11 @@ async function tool(page, id) {
 async function shot(page, name) {
   await page.mouse.move(80, 80);
   await expect(page.locator("#toast")).not.toHaveClass(/show/);
-  await expect(page).toHaveScreenshot(name + ".png");
+  await page.evaluate(() => document.fonts.ready);
+  // Capture once after the UI is ready. Compare bytes softly so a raster diff
+  // cannot abort later functional assertions or consume their retry budget.
+  const actual = await page.screenshot({ animations: "disabled", caret: "hide", scale: "css", timeout: 30_000 });
+  expect.soft(actual, `VISUAL: ${name}`).toMatchSnapshot(name + ".png", { maxDiffPixelRatio: 0.012, threshold: 0.2 });
 }
 test.beforeEach(async ({ context, page }, info) => {
   await context.route("**/*", (r) => ["127.0.0.1", "localhost"].includes(new URL(r.request().url()).hostname) ? r.continue() : r.abort());
@@ -293,10 +297,14 @@ test("docking, persistence, reset, appearance, tooltip and cursor states @smoke 
   expect(await page.locator(".tool-learning-card:visible").count()).toBe(0);
   await page.mouse.move(80, 80);
   await page.locator("#quick-theme").click();
-  await page.locator('[data-theme-choice="' + (info.project.metadata.theme === "dark" ? "light" : "dark") + '"]').click();
+  // At 1920px the padded item's center coincides with a narrow Dockview sash.
+  // Use the visible label as the real pointer target; never force the click.
+  await page.locator('[data-theme-choice="' + (info.project.metadata.theme === "dark" ? "light" : "dark") + '"]')
+    .getByText(info.project.metadata.theme === "dark" ? "Claro" : "Oscuro", {exact:true}).click();
   await expect(page.locator("#siluetra-theme")).toHaveAttribute("color", info.project.metadata.theme === "dark" ? "light" : "dark");
   await page.locator("#quick-theme").click();
-  await page.locator('[data-theme-choice="' + info.project.metadata.theme + '"]').click();
+  await page.locator('[data-theme-choice="' + info.project.metadata.theme + '"]')
+    .getByText(info.project.metadata.theme === "dark" ? "Oscuro" : "Claro", {exact:true}).click();
   await expect(page.locator("#siluetra-theme")).toHaveAttribute("color", info.project.metadata.theme);
   await menu(page, "Archivo");
   await page.keyboard.press("ArrowDown");

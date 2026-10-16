@@ -1,0 +1,27 @@
+{
+  "image": "mcr.microsoft.com/playwright:v1.64.0-noble@sha256:bc72a8df40831ded821e3cbc79c318c21b44d6e51dff9fd89ace7a8249c5b462",
+  "node": "v22.20.0",
+  "chromium": "Google Chrome for Testing 156.0.8078.4",
+  "playwright": "1.64.0",
+  "libraries": "libfontconfig1:amd64\t2.15.0-1.1ubuntu2\nlibfreetype6:amd64\t2.13.2+dfsg-1ubuntu0.2",
+  "fonts": [
+    {
+      "file": "fonts/Open_Sans/OpenSans-Bold.ttf",
+      "sha256": "27da758f4dcac9a65abe914c13b463b42982b9909bc65713424099f4810bd1e6"
+    },
+    {
+      "file": "fonts/Open_Sans/OpenSans-Italic.ttf",
+      "sha256": "93bc1bb6abf4e6b7c75d7131714061d5b57cc478abcabe4cb3519bb38fb917aa"
+    },
+    {
+      "file": "fonts/Open_Sans/OpenSans-Regular.ttf",
+      "sha256": "c53aceea2dcf5b4098099c0c4d0a061d17e178a049317b42a422b1a9f7f8eb59"
+    }
+  ],
+  "fallback": "Open Sans",
+  "dpr": 1,
+  "locale": "en-US",
+  "timezone": "UTC",
+  "maxDiffPixelRatio": 0.012,
+  "threshold": 0.2
+}

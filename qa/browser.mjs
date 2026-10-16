@@ -1,40 +1,43 @@
 import { chromium } from "@playwright/test";
-import packed from "@sparticuz/chromium";
 import { createReadStream, createWriteStream, existsSync } from "node:fs";
-import { mkdir, chmod } from "node:fs/promises";
+import { mkdir, writeFile } from "node:fs/promises";
 import { pipeline } from "node:stream/promises";
 import { createBrotliDecompress } from "node:zlib";
 import { execFileSync } from "node:child_process";
 import path from "node:path";
 const cache = path.resolve("qa/.browser");
 async function prepareBrowser() {
-  if(process.platform !== 'linux') {
-    if(!existsSync(chromium.executablePath())) throw Error('Install native Chromium with the local Playwright CLI');
-    return chromium.executablePath();
-  }
-  await mkdir(cache, { recursive: true });
-  const bin = path.resolve("node_modules/@sparticuz/chromium/bin");
-  const executable = path.join(cache, "chromium");
-  if (!existsSync(executable)) {
-    await pipeline(createReadStream(path.join(bin, "chromium.br")), createBrotliDecompress(), createWriteStream(executable));
-    await chmod(executable, 448);
-  }
-  for (const name of ["fonts", "swiftshader", "al2023"]) {
-    const mark = path.join(cache, name + ".tar");
-    if (!existsSync(mark)) {
-      await pipeline(createReadStream(path.join(bin, name + ".tar.br")), createBrotliDecompress(), createWriteStream(mark));
-      execFileSync("tar", ["--no-same-owner", "-xf", mark, "-C", cache]);
+  const executable = chromium.executablePath();
+  if (!existsSync(executable)) throw Error("Install the pinned browser: npm run qa:install. Canonical visual QA uses qa/Dockerfile.");
+  if (process.platform === "linux") {
+    await mkdir(cache, { recursive: true });
+    if (!existsSync(path.join(cache, "fonts/Open_Sans/OpenSans-Regular.ttf"))) {
+      const archive = path.join(cache, "fonts.tar");
+      await pipeline(createReadStream("node_modules/@sparticuz/chromium/bin/fonts.tar.br"), createBrotliDecompress(), createWriteStream(archive));
+      execFileSync("tar", ["--no-same-owner", "-xf", archive, "-C", cache]);
     }
+    // The packaged fonts.conf contains AWS paths. Use only these pinned fonts.
+    const xml = value => value.replaceAll("&", "&amp;").replaceAll("<", "&lt;");
+    await writeFile(path.join(cache, "siluetra-fonts.conf"), `<?xml version="1.0"?>
+<!DOCTYPE fontconfig SYSTEM "fonts.dtd">
+<fontconfig><dir>${xml(path.join(cache, "fonts"))}</dir>
+<cachedir>${xml(path.join(cache, "font-cache"))}</cachedir>
+<alias><family>sans-serif</family><prefer><family>Open Sans</family></prefer></alias>
+</fontconfig>`);
   }
   return executable;
 }
-async function launchBrowser() {
-  const executable = await prepareBrowser();
-  return chromium.launch({ headless: true, executablePath: executable, args: packed.args.filter((x) => !x.includes("disable-web-security") && !x.includes("allow-running-insecure-content") && !x.includes("hide-scrollbars") && !x.includes("single-process")), env: { ...process.env, FONTCONFIG_PATH: path.join(cache, "fonts"), LD_LIBRARY_PATH: [cache, path.join(cache, "lib"), process.env.LD_LIBRARY_PATH || ""].join(":") } });
+function browserLaunchOptions(executablePath) {
+  // Use Playwright's supported Chromium launch defaults, not Lambda GPU flags.
+  return { executablePath, ...(process.platform === "linux" ? {
+    env: { ...process.env, FONTCONFIG_FILE: path.join(cache, "siluetra-fonts.conf"), FONTCONFIG_PATH: cache }
+  } : {}) };
 }
-if (process.argv.includes("--install")) console.log(await prepareBrowser());
-export {
-  cache,
-  launchBrowser,
-  prepareBrowser
-};
+async function launchBrowser() {
+  return chromium.launch({ headless: true, ...browserLaunchOptions(await prepareBrowser()) });
+}
+if (process.argv.includes("--install")) {
+  if (!existsSync(chromium.executablePath())) execFileSync(process.execPath, ["node_modules/@playwright/test/cli.js", "install", "chromium"], {stdio:"inherit"});
+  console.log(await prepareBrowser());
+}
+export { cache, prepareBrowser, launchBrowser, browserLaunchOptions };

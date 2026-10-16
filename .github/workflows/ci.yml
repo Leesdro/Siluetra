@@ -1,5 +1,7 @@
 name: CI
 on: [push, pull_request, workflow_dispatch]
+permissions:
+  contents: read
 jobs:
   check:
     runs-on: ubuntu-24.04
@@ -14,10 +16,42 @@ jobs:
       - run: npm run build
       - run: npm run validate
       - run: npm run qa:validate
-      - run: npm run qa:install
-      - run: npm run qa:browser
-      - uses: actions/upload-artifact@v4
-        if: failure()
+  browser:
+    needs: check
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        project: [1366-768-dark, 1366-768-light, 1440-900-dark, 1440-900-light, 1920-1080-dark, 1920-1080-light, 1024-768-dark, 1024-768-light]
+    container:
+      image: mcr.microsoft.com/playwright:v1.64.0-noble@sha256:bc72a8df40831ded821e3cbc79c318c21b44d6e51dff9fd89ace7a8249c5b462
+      options: --ipc=host
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
-          name: browser-failures
-          path: qa/results/
+          node-version: 22.20.0
+          cache: npm
+      - run: npm ci
+      - run: npm run qa:install
+      - name: Verify canonical rendering environment
+        run: node qa/environment.mjs
+      - name: Browser interactions and visual comparisons
+        id: browser
+        run: npm run qa:browser -- --project=${{ matrix.project }} --workers=1
+      - name: Collect bounded failure diagnostics
+        if: failure() && steps.browser.outcome == 'failure'
+        run: node qa/collect-failures.mjs
+      - name: Upload optional failure diagnostics
+        if: failure() && steps.browser.outcome == 'failure'
+        continue-on-error: true
+        uses: actions/upload-artifact@v4
+        with:
+          name: browser-failures-${{ matrix.project }}
+          path: |
+            qa/results/failure-artifacts/
+            qa/results/environment.json
+          if-no-files-found: ignore
+          compression-level: 9
+          retention-days: 3
