@@ -1,0 +1,49 @@
+name: Deploy stable release to GitHub Pages
+
+on:
+  release:
+    types: [published]
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: github-pages
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    if: ${{ github.event.release.draft == false && github.event.release.prerelease == false }}
+    runs-on: ubuntu-24.04
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Checkout exact release tag
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ format('refs/tags/{0}', github.event.release.tag_name) }}
+          persist-credentials: false
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22.20.0'
+          cache: npm
+      - run: npm ci
+      - run: npm test
+      - run: npm run build
+      - run: npm run validate
+      - run: npm run qa:validate
+      - name: Configure GitHub Pages
+        uses: actions/configure-pages@v5
+      - name: Disable Jekyll processing
+        run: touch dist/.nojekyll
+      - name: Upload dist only
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: dist/
+      - name: Deploy GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
