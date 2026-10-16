@@ -29,4 +29,4 @@ Contributors interested in SVG/vector graphics, geometry, UI/UX, fashion/streetw
 
 ## License and status
 
-Authorized original code is MIT; third-party components retain their terms in [notices](THIRD_PARTY_NOTICES.md). [Asset provenance](docs/ASSET_PROVENANCE.md) needs author confirmation for affected resources before public redistribution.
+Authorized original code is MIT; third-party components retain their terms in [notices](THIRD_PARTY_NOTICES.md). [Asset provenance](docs/ASSET_PROVENANCE.md) records the owner's confirmation of project-specific AI-assisted assets and the scope of their licensing.
