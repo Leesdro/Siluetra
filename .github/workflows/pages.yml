@@ -3,6 +3,7 @@ name: Deploy stable release to GitHub Pages
 on:
   release:
     types: [published]
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -15,16 +16,16 @@ concurrency:
 
 jobs:
   deploy:
-    if: ${{ github.event.release.draft == false && github.event.release.prerelease == false }}
+    if: ${{ github.event_name == 'workflow_dispatch' || (github.event_name == 'release' && github.event.release.draft == false && github.event.release.prerelease == false) }}
     runs-on: ubuntu-24.04
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
-      - name: Checkout exact release tag
+      - name: Checkout release tag or selected manual ref commit
         uses: actions/checkout@v4
         with:
-          ref: ${{ format('refs/tags/{0}', github.event.release.tag_name) }}
+          ref: ${{ github.event_name == 'release' && format('refs/tags/{0}', github.event.release.tag_name) || github.sha }}
           persist-credentials: false
       - name: Set up Node
         uses: actions/setup-node@v4
